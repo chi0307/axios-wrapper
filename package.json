@@ -1,0 +1,70 @@
+{
+  "name": "prototype-node",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "clear": "rm -rf dist coverage typia-generated",
+    "dev:typia": "typia generate --project tsconfig.app.json --input src --output typia-generated",
+    "dev:start": "tsx --tsconfig ./tsconfig.app.json typia-generated/index.ts",
+    "dev": "nodemon --delay 3 --watch src --ext ts --exec \"run-s dev:typia dev:start\"",
+    "build": "run-s clear build-only",
+    "build-only": "tsc --build --force tsconfig.app.json && tsc-alias -p tsconfig.app.json",
+    "start": "node dist/index.js",
+    "format": "eslint . --fix",
+    "check": "pnpm run \"/^check:.*/\"",
+    "check:lint": "eslint .",
+    "check:tsc": "tsc --noEmit",
+    "test": "pnpm run \"/^test:.*/\"",
+    "test:unit": "jest",
+    "prepare": "ts-patch install && typia patch",
+    "upgrade-packages": "ncu --doctor -u --doctorInstall \"pnpm install\" --doctorTest \"run-p check test\" --peer"
+  },
+  "author": "Junchi Wang <benson26365156@gmail.com> (https://chi0307.github.io)",
+  "license": "ISC",
+  "description": "A prototype Node.js application with modern development tooling.",
+  "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
+    "@tsconfig/node22": "^22.0.0",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.7",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import-x": "^4.6.1",
+    "eslint-plugin-perfectionist": "^4.7.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-security": "^3.0.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "npm-check-updates": "^17.1.14",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.4.2",
+    "ts-jest": "^29.2.5",
+    "ts-patch": "^3.3.0",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "typia": "^7.6.0"
+  },
+  "keywords": [
+    "Node.js",
+    "TypeScript",
+    "typia",
+    "prototype",
+    "axios"
+  ]
+}

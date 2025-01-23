@@ -1,0 +1,40 @@
+{
+  "extends": ["@tsconfig/node22/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
+  "include": ["env.d.ts", "src/**/*"],
+  "exclude": [
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "src/test/**/*",
+    "jest.config.cjs",
+    "coverage"
+  ],
+  "compilerOptions": {
+    "lib": ["ESNext"], // 使用 ESNext 標準庫（例如支援最新的 `Promise.allSettled` 等功能）
+    "composite": true, // 啟用增量編譯，生成 `.tsbuildinfo` 文件來加快重建速度
+    "tsBuildInfoFile": "node_modules/.tmp/tsconfig.tsbuildinfo", // 指定增量編譯資訊的輸出路徑
+    "baseUrl": "./", // 設定模組解析的根路徑，通常設為專案的根目錄
+    "paths": {
+      "@/*": ["src/*"] // 路徑別名設定，讓 `@/` 對應到 `src/` 資料夾
+    },
+    "noEmit": false, // 允許輸出編譯結果（設為 true 時不會輸出 .js/.d.ts 等文件）
+    "rootDir": "src", // 將 `src/` 設為 TypeScript 編譯時的根目錄
+    "outDir": "dist", // 指定輸出目錄，所有 `.js` 文件會輸出到 `dist/` 資料夾
+    "module": "ESNext",
+    "moduleResolution": "bundler", // 使用 bundler 忽略掉 ts 後綴的問題
+    "esModuleInterop": true, // 允許將 `CommonJS` 模組與 `import/export` 混合使用
+    "allowSyntheticDefaultImports": true, // 允許以 `import foo from "foo"` 的方式引入 `CommonJS` 模組
+    "declaration": true, // 生成 `.d.ts` 型別聲明檔案
+    "declarationMap": true, // 生成型別檔案對應的 `.map` 文件，方便除錯時跳轉回原始 `.ts`
+    "forceConsistentCasingInFileNames": true, // 強制檔案引用的大小寫一致，避免跨平台路徑大小寫錯誤
+    "resolveJsonModule": true, // 允許引入 `.json` 檔案作為模組
+    "plugins": [
+      {
+        "transform": "typia/lib/transform"
+      }
+    ]
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  }
+}

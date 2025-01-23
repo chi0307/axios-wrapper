@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true, // 測試時不產生輸出檔案
+    "types": ["jest", "node"], // 引入 Jest 與 Node 全域型別定義
+    "outDir": "./.jest-cache" // 避免影響 `dist/` 目錄
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
+}
