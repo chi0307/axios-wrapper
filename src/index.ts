@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { message } from '@/example'
 
 import { getUsers } from './apis/example'
