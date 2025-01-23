@@ -1,14 +1,19 @@
 {
-  "name": "prototype-node",
-  "version": "1.0.0",
+  "name": "@chi0307/axios-wrapper",
+  "version": "0.0.1",
   "type": "module",
   "main": "dist/index.js",
   "engines": {
     "node": ">=22",
     "pnpm": ">=9"
   },
-  "exports": {
-    ".": "./dist/index.js"
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "clear": "rm -rf dist coverage typia-generated",
@@ -29,7 +34,7 @@
   },
   "author": "Junchi Wang <benson26365156@gmail.com> (https://chi0307.github.io)",
   "license": "ISC",
-  "description": "A prototype Node.js application with modern development tooling.",
+  "description": "Axios Wrapper With TypeScript",
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
     "@tsconfig/node22": "^22.0.0",
