@@ -14,9 +14,6 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
-      typia:
-        specifier: ^7.6.0
-        version: 7.6.0(@samchon/openapi@2.4.0)(typescript@5.7.3)
     devDependencies:
       '@eslint-community/eslint-plugin-eslint-comments':
         specifier: ^4.4.1
@@ -87,6 +84,9 @@ importers:
       typescript-eslint:
         specifier: ^8.21.0
         version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
+      typia:
+        specifier: ^7.6.0
+        version: 7.6.0(@samchon/openapi@2.4.0)(typescript@5.7.3)
 
 packages:
 
