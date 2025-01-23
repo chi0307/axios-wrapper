@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type CreateAxiosDefaults } from 'axios'
 
+// eslint-disable-next-line import-x/no-cycle
 import { ApiCaller, ApiDefinition, Middleware, RequestOptions } from '@/type'
 
 // 格式化 URL，插入 `params`
@@ -121,7 +122,7 @@ function createMutationHelper<MiddlewareOptions extends Record<string, unknown>>
   }
 }
 
-interface CreateAPiClient<MiddlewareOptions extends Record<string, unknown>> {
+export interface APiClient<MiddlewareOptions extends Record<string, unknown>> {
   readonly delete: ReturnType<typeof createResponseHelper<MiddlewareOptions>>
   readonly get: ReturnType<typeof createResponseHelper<MiddlewareOptions>>
   readonly patch: ReturnType<typeof createMutationHelper<MiddlewareOptions>>
@@ -136,7 +137,7 @@ export function createApiClient<
   baseURL: `${'http' | 'https'}://${string}`,
   middlewares: Middleware<MiddlewareOptions>[] = [],
   axiosDefaultConfig: Omit<CreateAxiosDefaults, 'baseURL'> = {},
-): CreateAPiClient<MiddlewareOptions> {
+): APiClient<MiddlewareOptions> {
   const axiosInstance = axios.create({ ...axiosDefaultConfig, baseURL })
 
   // TODO: 要再想想怎麼樣讓 Params 跟 Path 可以同步避免少寫東西
