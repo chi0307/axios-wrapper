@@ -1,17 +1,44 @@
-# Docs
+# Axios API Client with Type Checking
 
-## 目的
+## 🌐 Languages
 
-- 希望在使用 axios 呼叫 API 時，回傳的內容能經過型別檢查 (typing check)，而非單純透過 as T 的方式強制轉型，這樣可以在 API 回傳錯誤時，第一時間發現問題，避免被錯誤的型別影響到應用程式的運行。
-- 透過提前封裝並定義好呼叫 API 的方法，減少開發過程中可能產生的錯誤，同時善用泛型 (Generics)，在開發階段提供提示，避免等到執行階段 (runtime) 才發現錯誤。
+- [中文版](https://github.com/chi0307/axios-wrapper/blob/master/README-chinese.md)
 
-## Example
+## Purpose
 
-以下是使用 createApiClient 並進行型別驗證的範例：
+The goal of this package is to ensure type safety when calling APIs using Axios. Instead of relying on `as T` to cast response data, this package validates the response structure at runtime, enabling immediate error detection if the API returns incorrect data. By leveraging generics and pre-defined methods, this package minimizes potential errors during development and avoids runtime surprises.
+
+## Features
+
+- **Type-Safe API Calls**: Validate API responses at runtime to prevent incorrect type usage.
+- **Leverage Generics**: Provide strong type hints during development.
+- **Customizable Validation**: Define custom validation functions or use third-party tools like [typia](https://typia.io/).
+- **Predefined API Methods**: Simplify API interactions with pre-built methods for `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests.
+- **Default Parameter Behavior**: Use `never` as defaults for `Params`, `Query`, and `Body` to enforce explicit typing.
+
+---
+
+## Installation
+
+```bash
+pnpm install @chi0307/axios-wrapper
+```
+
+---
+
+## Usage
+
+### Creating an API Client
 
 ```typescript
 const apiClient = createApiClient('http://localhost')
+```
 
+### Example: Define Types and Validators
+
+#### Manual Validator
+
+```typescript
 interface User {
   id: number
   name: string
@@ -27,50 +54,53 @@ function isUser(data: unknown): data is User {
   )
 }
 function isUsers(data: unknown): data is User[] {
-  return Array.isArray(data) && data.every((item) => isUser(item))
+  return Array.isArray(data) && data.every(isUser)
 }
 
-// type getUsers: () => Promise<User[]>
+// Example Usage
 export const getUsers = apiClient.get('/users', isUsers)
-
-// type getUser: (options: { params: { userId: string } }) => Promise<User>
 export const getUser = apiClient.get<{ userId: string }, never, User>('/user/:userId', isUser)
 
-// type users: User[]
-const users = await getUsers()
-// type user: User
-const user = await getUser({ params: { userId: 'XXX' } })
+const users = await getUsers() // Type: User[]
+const user = await getUser({ params: { userId: '123' } }) // Type: User
 ```
 
-## 使用 typia 優化
-
-推薦搭配 [typia](https://typia.io/) 進行型別驗證，可大幅減少手寫驗證邏輯的成本：
+#### Using Typia for Validation
 
 ```typescript
-// type getUsers: () => Promise<User[]>
-export const getUsers = apiClient.get('/users', typia.createIs<User[]>())
+import typia from 'typia'
 
-// type getUser: (options: { params: { userId: string } }) => Promise<User>
+interface User {
+  id: number
+  name: string
+}
+
+export const getUsers = apiClient.get('/users', typia.createIs<User[]>())
 export const getUser = apiClient.get<{ userId: string }, never, User>(
   '/user/:userId',
   typia.createIs<User>(),
 )
+
+const users = await getUsers() // Type: User[]
+const user = await getUser({ params: { userId: '123' } }) // Type: User
 ```
 
-## ApiClient 方法結構
+---
 
-- ApiClient.get<Params, Query, ReturnTyping>
-- ApiClient.post<Params, Query, Body, ReturnTyping>
-- ApiClient.put<Params, Query, Body, ReturnTyping>
-- ApiClient.patch<Params, Query, Body, ReturnTyping>
-- ApiClient.delete<Params, Query, ReturnTyping>
+## API Client Method Structure
 
-## 預設值行為
+### Method Signatures
 
-- Params, Query, 和 Body 預設為 never，表示不需要帶入參數。
-- 如果需要帶入參數，則必須一併帶入 ReturnTyping。
-- 當未指定型別時，ReturnTyping 會根據 validateResponse 自動推論。
+```typescript
+ApiClient.get<Params, Query, ReturnTyping>(url: string, validateResponse: (data: unknown) => data is ReturnTyping)
+ApiClient.post<Params, Query, Body, ReturnTyping>(url: string, validateResponse: (data: unknown) => data is ReturnTyping)
+ApiClient.put<Params, Query, Body, ReturnTyping>(url: string, validateResponse: (data: unknown) => data is ReturnTyping)
+ApiClient.patch<Params, Query, Body, ReturnTyping>(url: string, validateResponse: (data: unknown) => data is ReturnTyping)
+ApiClient.delete<Params, Query, ReturnTyping>(url: string, validateResponse: (data: unknown) => data is ReturnTyping)
+```
 
-# TODO
+### Default Parameter Behavior
 
-- 補上 [axios-mock-adapter](https://www.npmjs.com/package/axios-mock-adapter) 測試
+- **`Params`**, **`Query`**, and **`Body`** default to `never`.
+- If parameters are required, specify them explicitly along with `ReturnTyping`.
+- **`ReturnTyping`** will be inferred automatically if `validateResponse` is provided.

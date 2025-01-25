@@ -1,6 +1,6 @@
 {
   "name": "@chi0307/axios-wrapper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "dist/index.js",
   "engines": {
@@ -10,10 +10,15 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "README-chinese.md"
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chi0307/axios-wrapper"
   },
   "scripts": {
     "clear": "rm -rf dist coverage typia-generated",
