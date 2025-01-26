@@ -31,6 +31,8 @@ pnpm install @chi0307/axios-wrapper
 ### Creating an API Client
 
 ```typescript
+import { createApiClient } from '@chi0307/axios-wrapper'
+
 const apiClient = createApiClient('http://localhost')
 ```
 
