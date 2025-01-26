@@ -6,17 +6,7 @@ import axios, {
 } from 'axios'
 
 import { ApiCaller, ApiDefinition, Middleware, RequestOptions } from '@/type'
-
-// 格式化 URL，插入 `params`
-function buildUrlWithParams(url: string, params: null | Record<string, string>): string {
-  if (params === null) {
-    return url
-  }
-  return Object.entries(params).reduce(
-    (formattedUrl, [key, value]) => formattedUrl.replace(`:${key}`, encodeURIComponent(value)),
-    url,
-  )
-}
+import { buildUrlWithParams } from '@/utils'
 
 // 發送 API 請求
 async function sendRequest<Params, Query, Body, ReturnTyping>(
