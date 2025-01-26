@@ -120,6 +120,3 @@ export interface ApiDefinition<ReturnTyping> {
   readonly path: `/${string}` // API 路徑
   readonly validateResponse: (data: unknown) => data is ReturnTyping // 回傳型別檢查
 }
-
-// eslint-disable-next-line import-x/no-cycle
-export { type APiClient } from '@/index'
