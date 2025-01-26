@@ -4,7 +4,7 @@ export function buildUrlWithParams(url: string, params: null | Record<string, st
     return url
   }
   return Object.entries(params).reduce(
-    (formattedUrl, [key, value]) => formattedUrl.replace(`:${key}`, encodeURIComponent(value)),
+    (formattedUrl, [key, value]) => formattedUrl.replaceAll(`:${key}`, encodeURIComponent(value)),
     url,
   )
 }
