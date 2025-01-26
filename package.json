@@ -32,8 +32,10 @@
     "check": "pnpm run \"/^check:.*/\"",
     "check:lint": "eslint .",
     "check:tsc": "tsc --noEmit",
-    "test": "pnpm run \"/^test:.*/\"",
-    "test:unit": "jest",
+    "test": "jest",
+    "test:unit": "jest --testMatch '**/*.test.ts' --passWithNoTests",
+    "test:integration": "jest --testMatch '**/*.spec.ts' --passWithNoTests",
+    "test:watch": "jest --watchAll",
     "prepare": "ts-patch install && typia patch",
     "upgrade-packages": "ncu --doctor -u --doctorInstall \"pnpm install\" --doctorTest \"run-p check test\" --peer"
   },
