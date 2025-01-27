@@ -1,4 +1,5 @@
 import axios, {
+  AxiosResponse,
   AxiosStatic,
   type AxiosInstance,
   type AxiosRequestConfig,
@@ -13,7 +14,7 @@ async function sendRequest<Params, Query, Body, ReturnTyping>(
   axiosInstance: AxiosInstance,
   { path, method, validateResponse }: ApiDefinition<ReturnTyping>,
   options: null | RequestOptions<Params, Query, Body>,
-): Promise<ReturnTyping> {
+): Promise<AxiosResponse<ReturnTyping | null>> {
   const params = options !== null && 'params' in options ? options.params : undefined
   const query = options !== null && 'query' in options ? options.query : undefined
   const body = options !== null && 'body' in options ? options.body : undefined
@@ -26,14 +27,13 @@ async function sendRequest<Params, Query, Body, ReturnTyping>(
     data: body,
   }
 
-  const { data } = await axiosInstance.request<unknown>(config)
-  // TODO: status code 其他的狀況還沒想好要怎麼處理
+  const { data, ...otherResponse } = await axiosInstance.request<unknown>(config)
 
   if (!validateResponse(data)) {
-    throw new Error('Response validation failed')
+    return { ...otherResponse, data: null }
   }
 
-  return data
+  return { ...otherResponse, data }
 }
 
 export function setAxiosInstance<MiddlewareOptions extends Record<string, unknown>>(

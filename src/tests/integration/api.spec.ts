@@ -34,10 +34,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.get('/users', isUsers)
-      const users = await getUsers()
+      const { data } = await getUsers()
 
       // Assert
-      expect(users).toEqual(randomUsers)
+      expect(data).toEqual(randomUsers)
     })
 
     test('Has Params, No Query', async () => {
@@ -48,11 +48,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.get<{ userId: number }, never, User>('/user/:userId', isUser)
-      const user = await getUser({ params: { userId } })
+      const { data } = await getUser({ params: { userId } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, Has Query', async () => {
@@ -65,11 +66,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.get<never, { q: { userName: string } }, User>('/user', isUser)
-      const user = await getUser({ query: { q: { userName } } })
+      const { data } = await getUser({ query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('Has Params, Has Query', async () => {
@@ -85,11 +87,12 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const user = await getUser({ params: { userId }, query: { q: { userName } } })
+      const { data } = await getUser({ params: { userId }, query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
   })
 
@@ -101,10 +104,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.post('/users', isUsers)
-      const users = await getUsers()
+      const { data } = await getUsers()
 
       // Assert
-      expect(users).toEqual(randomUsers)
+      expect(data).toEqual(randomUsers)
     })
 
     test('Has Params, No Query, No Body', async () => {
@@ -118,11 +121,12 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const user = await getUser({ params: { userId } })
+      const { data } = await getUser({ params: { userId } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, Has Query, No Body', async () => {
@@ -138,11 +142,12 @@ describe('createApiClient (no middleware)', () => {
         '/user',
         isUser,
       )
-      const user = await getUser({ query: { q: { userName } } })
+      const { data } = await getUser({ query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, No Query, Has Body', async () => {
@@ -153,11 +158,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.post<never, never, { userName: string }, User>('/user', isUser)
-      const user = await getUser({ body: { userName } })
+      const { data } = await getUser({ body: { userName } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test.todo('Has Params, Has Query, No Body')
@@ -174,10 +180,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.put('/users', isUsers)
-      const users = await getUsers()
+      const { data } = await getUsers()
 
       // Assert
-      expect(users).toEqual(randomUsers)
+      expect(data).toEqual(randomUsers)
     })
 
     test('Has Params, No Query, No Body', async () => {
@@ -188,11 +194,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.put<{ userId: number }, never, never, User>('/user/:userId', isUser)
-      const user = await getUser({ params: { userId } })
+      const { data } = await getUser({ params: { userId } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, Has Query, No Body', async () => {
@@ -208,11 +215,12 @@ describe('createApiClient (no middleware)', () => {
         '/user',
         isUser,
       )
-      const user = await getUser({ query: { q: { userName } } })
+      const { data } = await getUser({ query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, No Query, Has Body', async () => {
@@ -223,11 +231,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.put<never, never, { userName: string }, User>('/user', isUser)
-      const user = await getUser({ body: { userName } })
+      const { data } = await getUser({ body: { userName } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test.todo('Has Params, Has Query, No Body')
@@ -244,10 +253,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.patch('/users', isUsers)
-      const users = await getUsers()
+      const { data } = await getUsers()
 
       // Assert
-      expect(users).toEqual(randomUsers)
+      expect(data).toEqual(randomUsers)
     })
 
     test('Has Params, No Query, No Body', async () => {
@@ -261,11 +270,12 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const user = await getUser({ params: { userId } })
+      const { data } = await getUser({ params: { userId } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, Has Query, No Body', async () => {
@@ -281,11 +291,12 @@ describe('createApiClient (no middleware)', () => {
         '/user',
         isUser,
       )
-      const user = await getUser({ query: { q: { userName } } })
+      const { data } = await getUser({ query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, No Query, Has Body', async () => {
@@ -296,11 +307,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.patch<never, never, { userName: string }, User>('/user', isUser)
-      const user = await getUser({ body: { userName } })
+      const { data } = await getUser({ body: { userName } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test.todo('Has Params, Has Query, No Body')
@@ -317,10 +329,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.delete('/users', isUsers)
-      const users = await getUsers()
+      const { data } = await getUsers()
 
       // Assert
-      expect(users).toEqual(randomUsers)
+      expect(data).toEqual(randomUsers)
     })
 
     test('Has Params, No Query', async () => {
@@ -331,11 +343,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.delete<{ userId: number }, never, User>('/user/:userId', isUser)
-      const user = await getUser({ params: { userId } })
+      const { data } = await getUser({ params: { userId } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('No Params, Has Query', async () => {
@@ -348,11 +361,12 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.delete<never, { q: { userName: string } }, User>('/user', isUser)
-      const user = await getUser({ query: { q: { userName } } })
+      const { data } = await getUser({ query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
 
     test('Has Params, Has Query', async () => {
@@ -368,11 +382,12 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const user = await getUser({ params: { userId }, query: { q: { userName } } })
+      const { data } = await getUser({ params: { userId }, query: { q: { userName } } })
 
       // Assert
-      expect(user.id).toBe(userId)
-      expect(user.name).toBe(userName)
+      expect(data).not.toBeNull()
+      expect(data?.id).toBe(userId)
+      expect(data?.name).toBe(userName)
     })
   })
 })

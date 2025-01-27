@@ -1,4 +1,4 @@
-import { AxiosInstance, Method } from 'axios'
+import { AxiosInstance, AxiosResponse, Method } from 'axios'
 
 /** 判斷型別是否為 `never` */
 type IsNever<T> = [T] extends [never] ? true : false
@@ -104,10 +104,14 @@ export type RequestOptions<Params, Query, Body> =
  */
 export type ApiCaller<Params, Query, Body, ReturnTyping> =
   RequestOptions<Params, Query, Body> extends Record<string, never>
-    ? () => Promise<ReturnTyping>
+    ? () => Promise<AxiosResponse<ReturnTyping | null>>
     : HasRequiredField<RequestOptions<Params, Query, Body>> extends true
-      ? (options: RequestOptions<Params, Query, Body>) => Promise<ReturnTyping>
-      : (options?: RequestOptions<Params, Query, Body>) => Promise<ReturnTyping>
+      ? (
+          options: RequestOptions<Params, Query, Body>,
+        ) => Promise<AxiosResponse<ReturnTyping | null>>
+      : (
+          options?: RequestOptions<Params, Query, Body>,
+        ) => Promise<AxiosResponse<ReturnTyping | null>>
 
 export type Middleware<MiddlewareOptions extends Record<string, unknown>> = (
   axiosInstance: AxiosInstance,
