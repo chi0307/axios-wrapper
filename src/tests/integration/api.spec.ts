@@ -5,7 +5,7 @@ import typia, { tags } from 'typia'
 import { APiClient, createApiClient } from '@/client'
 
 interface User {
-  id: number
+  id: number & tags.Type<'int32'>
   name: string
 }
 
@@ -42,12 +42,9 @@ describe('createApiClient (no middleware)', () => {
 
     test('Has Params, No Query', async () => {
       // Arrange
-      const userId = typia.random<number>()
-      const userName = typia.random<string>()
-      mock.onGet(/^\/user\/.*$/).reply(({ url }) => {
-        const id = parseFloat(url?.replace(/^\/user\/(.*)$/, '$1') ?? '')
-        return [200, { id, name: userName }]
-      })
+      const userId = typia.random<User['id']>()
+      const userName = typia.random<User['name']>()
+      mock.onGet(`/user/${userId}`).reply(200, { id: userId, name: userName })
 
       // Act
       const getUser = apiClient.get<{ userId: number }, never, User>('/user/:userId', isUser)
@@ -58,8 +55,42 @@ describe('createApiClient (no middleware)', () => {
       expect(user.name).toBe(userName)
     })
 
-    test.todo('No Params, Has Query')
-    test.todo('Has Params, Has Query')
+    test('No Params, Has Query', async () => {
+      // Arrange
+      const userId = typia.random<User['id']>()
+      const userName = typia.random<User['name']>()
+      mock
+        .onGet('/user', { params: { q: { userName } } })
+        .reply(200, { id: userId, name: userName })
+
+      // Act
+      const getUser = apiClient.get<never, { q: { userName: string } }, User>('/user', isUser)
+      const user = await getUser({ query: { q: { userName } } })
+
+      // Assert
+      expect(user.id).toBe(userId)
+      expect(user.name).toBe(userName)
+    })
+
+    test('Has Params, Has Query', async () => {
+      // Arrange
+      const userId = typia.random<User['id']>()
+      const userName = typia.random<User['name']>()
+      mock
+        .onGet(`/user/${userId}`, { params: { q: { userName } } })
+        .reply(200, { id: userId, name: userName })
+
+      // Act
+      const getUser = apiClient.get<{ userId: number }, { q: { userName: string } }, User>(
+        '/user/:userId',
+        isUser,
+      )
+      const user = await getUser({ params: { userId }, query: { q: { userName } } })
+
+      // Assert
+      expect(user.id).toBe(userId)
+      expect(user.name).toBe(userName)
+    })
   })
 
   describe('POST method', () => {
