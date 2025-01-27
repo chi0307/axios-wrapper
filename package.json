@@ -1,6 +1,6 @@
 {
   "name": "@chi0307/axios-wrapper",
-  "version": "0.0.3",
+  "version": "1.0.1",
   "type": "module",
   "main": "dist/index.js",
   "engines": {
