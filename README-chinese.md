@@ -63,8 +63,8 @@ function isUsers(data: unknown): data is User[] {
 export const getUsers = apiClient.get('/users', isUsers)
 export const getUser = apiClient.get<{ userId: string }, never, User>('/user/:userId', isUser)
 
-const { data: users } = await getUsers() // 型別：User[]
-const { data: user } = await getUser({ params: { userId: '123' } }) // 型別：User
+const { data: users } = await getUsers() // 型別：User[] | null
+const { data: user } = await getUser({ params: { userId: '123' } }) // 型別：User | null
 ```
 
 #### 使用 Typia 進行驗證
@@ -83,8 +83,8 @@ export const getUser = apiClient.get<{ userId: string }, never, User>(
   typia.createIs<User>(),
 )
 
-const { data: users } = await getUsers() // 型別：User[]
-const { data: user } = await getUser({ params: { userId: '123' } }) // 型別：User
+const { data: users } = await getUsers() // 型別：User[] | null
+const { data: user } = await getUser({ params: { userId: '123' } }) // 型別：User | null
 ```
 
 ---

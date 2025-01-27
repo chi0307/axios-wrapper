@@ -63,8 +63,8 @@ function isUsers(data: unknown): data is User[] {
 export const getUsers = apiClient.get('/users', isUsers)
 export const getUser = apiClient.get<{ userId: string }, never, User>('/user/:userId', isUser)
 
-const { data: users } = await getUsers() // Type: User[]
-const { data: user } = await getUser({ params: { userId: '123' } }) // Type: User
+const { data: users } = await getUsers() // Type: User[] | null
+const { data: user } = await getUser({ params: { userId: '123' } }) // Type: User | null
 ```
 
 #### Using Typia for Validation
@@ -83,8 +83,8 @@ export const getUser = apiClient.get<{ userId: string }, never, User>(
   typia.createIs<User>(),
 )
 
-const { data: users } = await getUsers() // Type: User[]
-const { data: user } = await getUser({ params: { userId: '123' } }) // Type: User
+const { data: users } = await getUsers() // Type: User[] | null
+const { data: user } = await getUser({ params: { userId: '123' } }) // Type: User | null
 ```
 
 ---
