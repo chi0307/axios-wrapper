@@ -34,9 +34,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.get('/users', isUsers)
-      const { data } = await getUsers()
+      const { data, status } = await getUsers()
 
       // Assert
+      expect(status).toBe(200)
       expect(data).toEqual(randomUsers)
     })
 
@@ -48,9 +49,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.get<{ userId: number }, never, User>('/user/:userId', isUser)
-      const { data } = await getUser({ params: { userId } })
+      const { data, status } = await getUser({ params: { userId } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -66,9 +68,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.get<never, { q: { userName: string } }, User>('/user', isUser)
-      const { data } = await getUser({ query: { q: { userName } } })
+      const { data, status } = await getUser({ query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -87,9 +90,10 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const { data } = await getUser({ params: { userId }, query: { q: { userName } } })
+      const { data, status } = await getUser({ params: { userId }, query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -104,9 +108,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.post('/users', isUsers)
-      const { data } = await getUsers()
+      const { data, status } = await getUsers()
 
       // Assert
+      expect(status).toBe(200)
       expect(data).toEqual(randomUsers)
     })
 
@@ -121,9 +126,10 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const { data } = await getUser({ params: { userId } })
+      const { data, status } = await getUser({ params: { userId } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -142,9 +148,10 @@ describe('createApiClient (no middleware)', () => {
         '/user',
         isUser,
       )
-      const { data } = await getUser({ query: { q: { userName } } })
+      const { data, status } = await getUser({ query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -158,9 +165,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.post<never, never, { userName: string }, User>('/user', isUser)
-      const { data } = await getUser({ body: { userName } })
+      const { data, status } = await getUser({ body: { userName } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -180,9 +188,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.put('/users', isUsers)
-      const { data } = await getUsers()
+      const { data, status } = await getUsers()
 
       // Assert
+      expect(status).toBe(200)
       expect(data).toEqual(randomUsers)
     })
 
@@ -194,9 +203,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.put<{ userId: number }, never, never, User>('/user/:userId', isUser)
-      const { data } = await getUser({ params: { userId } })
+      const { data, status } = await getUser({ params: { userId } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -215,9 +225,10 @@ describe('createApiClient (no middleware)', () => {
         '/user',
         isUser,
       )
-      const { data } = await getUser({ query: { q: { userName } } })
+      const { data, status } = await getUser({ query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -231,9 +242,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.put<never, never, { userName: string }, User>('/user', isUser)
-      const { data } = await getUser({ body: { userName } })
+      const { data, status } = await getUser({ body: { userName } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -253,9 +265,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.patch('/users', isUsers)
-      const { data } = await getUsers()
+      const { data, status } = await getUsers()
 
       // Assert
+      expect(status).toBe(200)
       expect(data).toEqual(randomUsers)
     })
 
@@ -270,9 +283,10 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const { data } = await getUser({ params: { userId } })
+      const { data, status } = await getUser({ params: { userId } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -291,9 +305,10 @@ describe('createApiClient (no middleware)', () => {
         '/user',
         isUser,
       )
-      const { data } = await getUser({ query: { q: { userName } } })
+      const { data, status } = await getUser({ query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -307,9 +322,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.patch<never, never, { userName: string }, User>('/user', isUser)
-      const { data } = await getUser({ body: { userName } })
+      const { data, status } = await getUser({ body: { userName } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -329,9 +345,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUsers = apiClient.delete('/users', isUsers)
-      const { data } = await getUsers()
+      const { data, status } = await getUsers()
 
       // Assert
+      expect(status).toBe(200)
       expect(data).toEqual(randomUsers)
     })
 
@@ -343,9 +360,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.delete<{ userId: number }, never, User>('/user/:userId', isUser)
-      const { data } = await getUser({ params: { userId } })
+      const { data, status } = await getUser({ params: { userId } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -361,9 +379,10 @@ describe('createApiClient (no middleware)', () => {
 
       // Act
       const getUser = apiClient.delete<never, { q: { userName: string } }, User>('/user', isUser)
-      const { data } = await getUser({ query: { q: { userName } } })
+      const { data, status } = await getUser({ query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
@@ -382,9 +401,10 @@ describe('createApiClient (no middleware)', () => {
         '/user/:userId',
         isUser,
       )
-      const { data } = await getUser({ params: { userId }, query: { q: { userName } } })
+      const { data, status } = await getUser({ params: { userId }, query: { q: { userName } } })
 
       // Assert
+      expect(status).toBe(200)
       expect(data).not.toBeNull()
       expect(data?.id).toBe(userId)
       expect(data?.name).toBe(userName)
