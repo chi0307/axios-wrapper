@@ -8,13 +8,13 @@ interface User {
   id: number & tags.Type<'int32'>
   name: string
 }
-
-const isUsers = typia.createIs<User[]>()
 const isUser = typia.createIs<User>()
 
 describe('createApiClient (no middleware)', () => {
   let mock: AxiosMockAdapter
   let apiClient: APiClient<Record<string, never>>
+  const user: User = typia.random<User>()
+  const token: string = typia.random<string>()
 
   beforeEach(() => {
     mock = new AxiosMockAdapter(axios)
@@ -26,388 +26,235 @@ describe('createApiClient (no middleware)', () => {
     mock.restore()
   })
 
-  describe('GET method', () => {
+  function mockApiReply(
+    method: 'get' | 'post' | 'put' | 'patch' | 'delete',
+    options: ('params' | 'query' | 'body')[],
+  ): void {
+    const url = options.includes('params') ? `/user/${user.id}` : `/user`
+    mock.onAny(url).reply((request) => {
+      if (request.method !== method) {
+        return [404]
+      }
+      if (options.includes('query')) {
+        const query: unknown = request.params
+        if (
+          typeof query !== 'object' ||
+          query === null ||
+          !('token' in query) ||
+          query.token !== token
+        ) {
+          return [400, 'query not found']
+        }
+      }
+      if (options.includes('body')) {
+        try {
+          if (typeof request.data !== 'string') {
+            return [500]
+          }
+          const body: unknown = JSON.parse(request.data)
+          if (
+            typeof body !== 'object' ||
+            body === null ||
+            !('userName' in body) ||
+            body.userName !== user.name
+          ) {
+            return [400, 'body not found']
+          }
+        } catch {
+          return [500]
+        }
+      }
+      return [200, user]
+    })
+  }
+
+  describe.each<'get' | 'delete'>(['get', 'delete'])('%s method', (method) => {
     test('No Params, No Query', async () => {
       // Arrange
-      const randomUsers = typia.random<User[] & tags.MinItems<10>>()
-      mock.onGet('/users').reply(200, randomUsers)
+      mockApiReply(method, [])
 
       // Act
-      const getUsers = apiClient.get('/users', isUsers)
-      const { data, status } = await getUsers()
+      const event = apiClient[method]('/user', isUser)
+      const { data, status } = await event()
 
       // Assert
       expect(status).toBe(200)
-      expect(data).toEqual(randomUsers)
+      expect(data).toEqual(user)
     })
 
     test('Has Params, No Query', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onGet(`/user/${userId}`).reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['params'])
 
       // Act
-      const getUser = apiClient.get<{ userId: number }, never, User>('/user/:userId', isUser)
-      const { data, status } = await getUser({ params: { userId } })
+      const event = apiClient[method]<{ userId: number }, never, User>('/user/:userId', isUser)
+      const { data, status } = await event({ params: { userId: user.id } })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
 
     test('No Params, Has Query', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onGet('/user', { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['query'])
 
       // Act
-      const getUser = apiClient.get<never, { q: { userName: string } }, User>('/user', isUser)
-      const { data, status } = await getUser({ query: { q: { userName } } })
+      const event = apiClient[method]<never, { token: string }, User>('/user', isUser)
+      const { data, status } = await event({ query: { token } })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
 
     test('Has Params, Has Query', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onGet(`/user/${userId}`, { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['params', 'query'])
 
       // Act
-      const getUser = apiClient.get<{ userId: number }, { q: { userName: string } }, User>(
+      const event = apiClient[method]<{ userId: number }, { token: string }, User>(
         '/user/:userId',
         isUser,
       )
-      const { data, status } = await getUser({ params: { userId }, query: { q: { userName } } })
+      const { data, status } = await event({
+        params: { userId: user.id },
+        query: { token },
+      })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
   })
 
-  describe('POST method', () => {
+  describe.each<'post' | 'put' | 'patch'>(['post', 'put', 'patch'])('%s method', (method) => {
     test('No Params, No Query, No Body', async () => {
       // Arrange
-      const randomUsers = typia.random<User[] & tags.MinItems<10>>()
-      mock.onPost('/users').reply(200, randomUsers)
+      mockApiReply(method, [])
 
       // Act
-      const getUsers = apiClient.post('/users', isUsers)
-      const { data, status } = await getUsers()
+      const event = apiClient[method]('/user', isUser)
+      const { data, status } = await event()
 
       // Assert
       expect(status).toBe(200)
-      expect(data).toEqual(randomUsers)
+      expect(data).toEqual(user)
     })
 
     test('Has Params, No Query, No Body', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onPost(`/user/${userId}`).reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['params'])
 
       // Act
-      const getUser = apiClient.post<{ userId: number }, never, never, User>(
+      const event = apiClient[method]<{ userId: number }, never, never, User>(
         '/user/:userId',
         isUser,
       )
-      const { data, status } = await getUser({ params: { userId } })
+      const { data, status } = await event({ params: { userId: user.id } })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
 
     test('No Params, Has Query, No Body', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onPost('/user', undefined, { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['query'])
 
       // Act
-      const getUser = apiClient.post<never, { q: { userName: string } }, never, User>(
-        '/user',
-        isUser,
-      )
-      const { data, status } = await getUser({ query: { q: { userName } } })
+      const event = apiClient[method]<never, { token: string }, never, User>('/user', isUser)
+      const { data, status } = await event({ query: { token } })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
 
     test('No Params, No Query, Has Body', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onPost('/user', { userName }).reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['body'])
 
       // Act
-      const getUser = apiClient.post<never, never, { userName: string }, User>('/user', isUser)
-      const { data, status } = await getUser({ body: { userName } })
+      const event = apiClient[method]<never, never, { userName: string }, User>('/user', isUser)
+      const { data, status } = await event({ body: { userName: user.name } })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
 
-    test.todo('Has Params, Has Query, No Body')
-    test.todo('Has Params, No Query, Has Body')
-    test.todo('No Params, Has Query, Has Body')
-    test.todo('Has Params, Has Query, Has Body')
-  })
-
-  describe('PUT method', () => {
-    test('No Params, No Query, No Body', async () => {
+    test('Has Params, Has Query, No Body', async () => {
       // Arrange
-      const randomUsers = typia.random<User[] & tags.MinItems<10>>()
-      mock.onPut('/users').reply(200, randomUsers)
+      mockApiReply(method, ['params', 'query'])
 
       // Act
-      const getUsers = apiClient.put('/users', isUsers)
-      const { data, status } = await getUsers()
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).toEqual(randomUsers)
-    })
-
-    test('Has Params, No Query, No Body', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onPut(`/user/${userId}`).reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.put<{ userId: number }, never, never, User>('/user/:userId', isUser)
-      const { data, status } = await getUser({ params: { userId } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test('No Params, Has Query, No Body', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onPut('/user', undefined, { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.put<never, { q: { userName: string } }, never, User>(
-        '/user',
-        isUser,
-      )
-      const { data, status } = await getUser({ query: { q: { userName } } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test('No Params, No Query, Has Body', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onPut('/user', { userName }).reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.put<never, never, { userName: string }, User>('/user', isUser)
-      const { data, status } = await getUser({ body: { userName } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test.todo('Has Params, Has Query, No Body')
-    test.todo('Has Params, No Query, Has Body')
-    test.todo('No Params, Has Query, Has Body')
-    test.todo('Has Params, Has Query, Has Body')
-  })
-
-  describe('PATCH method', () => {
-    test('No Params, No Query, No Body', async () => {
-      // Arrange
-      const randomUsers = typia.random<User[] & tags.MinItems<10>>()
-      mock.onPatch('/users').reply(200, randomUsers)
-
-      // Act
-      const getUsers = apiClient.patch('/users', isUsers)
-      const { data, status } = await getUsers()
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).toEqual(randomUsers)
-    })
-
-    test('Has Params, No Query, No Body', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onPatch(`/user/${userId}`).reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.patch<{ userId: number }, never, never, User>(
+      const event = apiClient[method]<{ userId: number }, { token: string }, never, User>(
         '/user/:userId',
         isUser,
       )
-      const { data, status } = await getUser({ params: { userId } })
+      const { data, status } = await event({ params: { userId: user.id }, query: { token } })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
     })
 
-    test('No Params, Has Query, No Body', async () => {
+    test('Has Params, No Query, Has Body', async () => {
       // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onPatch('/user', undefined, { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
+      mockApiReply(method, ['params', 'body'])
 
       // Act
-      const getUser = apiClient.patch<never, { q: { userName: string } }, never, User>(
-        '/user',
-        isUser,
-      )
-      const { data, status } = await getUser({ query: { q: { userName } } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test('No Params, No Query, Has Body', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onPatch('/user', { userName }).reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.patch<never, never, { userName: string }, User>('/user', isUser)
-      const { data, status } = await getUser({ body: { userName } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test.todo('Has Params, Has Query, No Body')
-    test.todo('Has Params, No Query, Has Body')
-    test.todo('No Params, Has Query, Has Body')
-    test.todo('Has Params, Has Query, Has Body')
-  })
-
-  describe('DELETE method', () => {
-    test('No Params, No Query', async () => {
-      // Arrange
-      const randomUsers = typia.random<User[] & tags.MinItems<10>>()
-      mock.onDelete('/users').reply(200, randomUsers)
-
-      // Act
-      const getUsers = apiClient.delete('/users', isUsers)
-      const { data, status } = await getUsers()
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).toEqual(randomUsers)
-    })
-
-    test('Has Params, No Query', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock.onDelete(`/user/${userId}`).reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.delete<{ userId: number }, never, User>('/user/:userId', isUser)
-      const { data, status } = await getUser({ params: { userId } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test('No Params, Has Query', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onDelete('/user', { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.delete<never, { q: { userName: string } }, User>('/user', isUser)
-      const { data, status } = await getUser({ query: { q: { userName } } })
-
-      // Assert
-      expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
-    })
-
-    test('Has Params, Has Query', async () => {
-      // Arrange
-      const userId = typia.random<User['id']>()
-      const userName = typia.random<User['name']>()
-      mock
-        .onDelete(`/user/${userId}`, { params: { q: { userName } } })
-        .reply(200, { id: userId, name: userName })
-
-      // Act
-      const getUser = apiClient.delete<{ userId: number }, { q: { userName: string } }, User>(
+      const event = apiClient[method]<{ userId: number }, never, { userName: string }, User>(
         '/user/:userId',
         isUser,
       )
-      const { data, status } = await getUser({ params: { userId }, query: { q: { userName } } })
+      const { data, status } = await event({
+        params: { userId: user.id },
+        body: { userName: user.name },
+      })
 
       // Assert
       expect(status).toBe(200)
-      expect(data).not.toBeNull()
-      expect(data?.id).toBe(userId)
-      expect(data?.name).toBe(userName)
+      expect(data).toEqual(user)
+    })
+
+    test('No Params, Has Query, Has Body', async () => {
+      // Arrange
+      mockApiReply(method, ['query', 'body'])
+
+      // Act
+      const event = apiClient[method]<never, { token: string }, { userName: string }, User>(
+        '/user',
+        isUser,
+      )
+      const { data, status } = await event({ query: { token }, body: { userName: user.name } })
+
+      // Assert
+      expect(status).toBe(200)
+      expect(data).toEqual(user)
+    })
+
+    test('Has Params, Has Query, Has Body', async () => {
+      // Arrange
+      mockApiReply(method, ['params', 'query', 'body'])
+
+      // Act
+      const event = apiClient[method]<
+        { userId: number },
+        { token: string },
+        { userName: string },
+        User
+      >('/user/:userId', isUser)
+      const { data, status } = await event({
+        params: { userId: user.id },
+        query: { token },
+        body: { userName: user.name },
+      })
+
+      // Assert
+      expect(status).toBe(200)
+      expect(data).toEqual(user)
     })
   })
 })
