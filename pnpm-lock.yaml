@@ -11,9 +11,6 @@ importers:
       axios:
         specifier: ^1.7.9
         version: 1.7.9
-      axios-mock-adapter:
-        specifier: ^2.1.0
-        version: 2.1.0(axios@1.7.9)
     devDependencies:
       '@eslint-community/eslint-plugin-eslint-comments':
         specifier: ^4.4.1
@@ -30,6 +27,9 @@ importers:
       '@types/node':
         specifier: ^22.10.7
         version: 22.10.7
+      axios-mock-adapter:
+        specifier: ^2.1.0
+        version: 2.1.0(axios@1.7.9)
       eslint:
         specifier: ^9.18.0
         version: 9.18.0
