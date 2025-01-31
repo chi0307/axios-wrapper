@@ -74,6 +74,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, [])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]('/user', isUser)
       const { data, status } = await event()
 
@@ -87,6 +88,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['params'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<{ userId: number }, never, User>('/user/:userId', isUser)
       const { data, status } = await event({ params: { userId: user.id } })
 
@@ -100,6 +102,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['query'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<never, { token: string }, User>('/user', isUser)
       const { data, status } = await event({ query: { token } })
 
@@ -113,6 +116,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['params', 'query'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<{ userId: number }, { token: string }, User>(
         '/user/:userId',
         isUser,
@@ -134,6 +138,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, [])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]('/user', isUser)
       const { data, status } = await event()
 
@@ -147,6 +152,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['params'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<{ userId: number }, never, never, User>(
         '/user/:userId',
         isUser,
@@ -163,6 +169,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['query'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<never, { token: string }, never, User>('/user', isUser)
       const { data, status } = await event({ query: { token } })
 
@@ -176,6 +183,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['body'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<never, never, { userName: string }, User>('/user', isUser)
       const { data, status } = await event({ body: { userName: user.name } })
 
@@ -189,6 +197,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['params', 'query'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<{ userId: number }, { token: string }, never, User>(
         '/user/:userId',
         isUser,
@@ -205,6 +214,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['params', 'body'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<{ userId: number }, never, { userName: string }, User>(
         '/user/:userId',
         isUser,
@@ -224,6 +234,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['query', 'body'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<never, { token: string }, { userName: string }, User>(
         '/user',
         isUser,
@@ -240,6 +251,7 @@ describe('createApiClient (no middleware)', () => {
       mockApiReply(method, ['params', 'query', 'body'])
 
       // Act
+      // eslint-disable-next-line security/detect-object-injection
       const event = apiClient[method]<
         { userId: number },
         { token: string },
