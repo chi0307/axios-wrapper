@@ -17,7 +17,6 @@ export default tsEslint.config(
   {
     plugins: {
       '@typescript-eslint': tsEslint.plugin,
-      'import-x': importX,
       perfectionist,
     },
     settings: {
