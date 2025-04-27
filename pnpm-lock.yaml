@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      axios:
-        specifier: ^1.9.0
-        version: 1.9.0
     devDependencies:
       '@eslint-community/eslint-plugin-eslint-comments':
         specifier: ^4.5.0
@@ -30,6 +26,9 @@ importers:
       '@types/node':
         specifier: ^22.15.2
         version: 22.15.2
+      axios:
+        specifier: ^1.9.0
+        version: 1.9.0
       axios-mock-adapter:
         specifier: ^2.1.0
         version: 2.1.0(axios@1.9.0)
